@@ -99,6 +99,17 @@ module web './core/host/appservice.bicep' = {
   }
 }
 
+// Role assignment for App Service managed identity to access Azure OpenAI
+module roleAssignment './core/security/role-assignment.bicep' = {
+  name: 'openai-role-assignment'
+  scope: rg
+  params: {
+    principalId: web.outputs.identityPrincipalId
+    roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd' // Cognitive Services OpenAI User
+    targetResourceId: openAi.outputs.id
+  }
+}
+
 // Outputs
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId

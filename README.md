@@ -109,15 +109,20 @@ Imagine a user wants a budget-friendly trip plan with currency conversion:
 2. **Configure environment**:
    ```bash
    cp .env.example .env
-   # Edit .env with your API keys
+   # Edit .env with your configuration
    ```
 
-3. **Run the application**:
+3. **Authenticate with Azure** (for Azure OpenAI without API key):
+   ```bash
+   az login
+   ```
+
+4. **Run the application**:
    ```bash
    uvicorn main:app --reload --host 0.0.0.0 --port 8000
    ```
 
-4. **Open your browser** to `http://localhost:8000`
+5. **Open your browser** to `http://localhost:8000`
 
 ### Azure Deployment
 
@@ -133,11 +138,10 @@ Imagine a user wants a budget-friendly trip plan with currency conversion:
    azd up
    ```
 
-3. **Configure API key** (one-time setup):
-   - Navigate to your Azure App Service in the Azure Portal
-   - Go to **Configuration** → **Application settings**
-   - Add `AZURE_OPENAI_API_KEY` with your Azure OpenAI API key
-   - Click **Save** and restart the app
+3. **Configure API key** (optional for local development):
+   - For **Azure deployment**: Authentication uses managed identity automatically (no manual configuration needed)
+   - For **local development**: Optionally add `AZURE_OPENAI_API_KEY` to your local `.env` file
+   - If no API key is provided locally, Azure CLI credentials will be used for authentication
 
 4. **Access your deployed application**:
    - The AZD template will output your application URL
@@ -145,8 +149,9 @@ Imagine a user wants a budget-friendly trip plan with currency conversion:
 
 **What gets deployed**:
 - ✅ Azure App Service Plan (P0V3 for production readiness)
-- ✅ Azure App Service with Python 3.11 runtime
+- ✅ Azure App Service with Python 3.11 runtime and managed identity
 - ✅ Azure OpenAI resource with `gpt-4.1-mini` model
+- ✅ Role assignment for secure managed identity authentication
 - ✅ All necessary environment variables pre-configured
 - ✅ Automatic build and deployment from source code
 
@@ -192,7 +197,7 @@ The application uses a sophisticated multi-agent architecture powered by Semanti
 | Variable | Description | Required |
 |----------|-------------|----------|
 | `AZURE_OPENAI_ENDPOINT` | Azure OpenAI service endpoint | Yes (if using Azure OpenAI) |
-| `AZURE_OPENAI_API_KEY` | Azure OpenAI API key | Yes (if using Azure OpenAI) |
+| `AZURE_OPENAI_API_KEY` | Azure OpenAI API key | No (uses managed identity in Azure, optional for local dev) |
 | `AZURE_OPENAI_DEPLOYMENT_NAME` | Azure OpenAI deployment name | Yes (if using Azure OpenAI) |
 | `AZURE_OPENAI_API_VERSION` | Azure OpenAI API version | Yes (if using Azure OpenAI) |
 | `OPENAI_API_KEY` | OpenAI API key | Yes (if using OpenAI) |
@@ -203,12 +208,18 @@ The application uses a sophisticated multi-agent architecture powered by Semanti
 
 ### Authentication
 
-This application uses **API key authentication** for Azure OpenAI instead of managed identity for simplified deployment and configuration.
+This application uses **managed identity authentication** for Azure OpenAI when deployed to Azure, providing enhanced security without the need to manage API keys.
+
+**Authentication Methods**:
+- **Azure Deployment**: Uses system-assigned managed identity with automatic role assignment to "Cognitive Services OpenAI User"
+- **Local Development**: 
+  - Option 1: Use Azure CLI credentials (`az login`) for keyless authentication
+  - Option 2: Set `AZURE_OPENAI_API_KEY` in your local `.env` file for traditional API key authentication
 
 **For Azure OpenAI**:
-- Set `AZURE_OPENAI_API_KEY` in your environment variables
 - Ensure your Azure OpenAI resource has the `gpt-4.1-mini` model deployed
 - API version `2025-01-01-preview` is recommended for latest features
+- The deployment automatically configures the necessary role assignments
 
 ### Switching Between OpenAI Services
 

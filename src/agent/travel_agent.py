@@ -7,7 +7,9 @@ from enum import Enum
 from typing import TYPE_CHECKING, Annotated, Any, Literal
 
 import httpx
+import openai
 
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from semantic_kernel.agents import ChatCompletionAgent, ChatHistoryAgentThread
@@ -70,18 +72,52 @@ def get_chat_completion_service(
 
 
 def _get_azure_openai_chat_completion_service() -> AzureChatCompletion:
-    """Return Azure OpenAI chat completion service.
+    """Return Azure OpenAI chat completion service with managed identity.
 
     Returns:
         AzureChatCompletion: The configured Azure OpenAI service.
     """
-    return AzureChatCompletion(
-        service_id=service_id,
-        deployment_name=os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME'),
-        endpoint=os.getenv('AZURE_OPENAI_ENDPOINT'),
-        api_key=os.getenv('AZURE_OPENAI_API_KEY'),
-        api_version=os.getenv('AZURE_OPENAI_API_VERSION'),
-    )
+    endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
+    deployment_name = os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME')
+    api_version = os.getenv('AZURE_OPENAI_API_VERSION')
+    api_key = os.getenv('AZURE_OPENAI_API_KEY')
+
+    if not endpoint:
+        raise ValueError("AZURE_OPENAI_ENDPOINT is required")
+    if not deployment_name:
+        raise ValueError("AZURE_OPENAI_DEPLOYMENT_NAME is required")
+    if not api_version:
+        raise ValueError("AZURE_OPENAI_API_VERSION is required")
+
+    # Use managed identity if no API key is provided
+    if not api_key:
+        # Create Azure credential for managed identity
+        credential = DefaultAzureCredential()
+        token_provider = get_bearer_token_provider(
+            credential, "https://cognitiveservices.azure.com/.default"
+        )
+        
+        # Create OpenAI client with managed identity
+        async_client = openai.AsyncAzureOpenAI(
+            azure_endpoint=endpoint,
+            azure_ad_token_provider=token_provider,
+            api_version=api_version,
+        )
+        
+        return AzureChatCompletion(
+            service_id=service_id,
+            deployment_name=deployment_name,
+            async_client=async_client,
+        )
+    else:
+        # Fallback to API key authentication for local development
+        return AzureChatCompletion(
+            service_id=service_id,
+            deployment_name=deployment_name,
+            endpoint=endpoint,
+            api_key=api_key,
+            api_version=api_version,
+        )
 
 
 def _get_openai_chat_completion_service() -> OpenAIChatCompletion:
