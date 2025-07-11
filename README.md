@@ -93,7 +93,8 @@ Imagine a user wants a budget-friendly trip plan with currency conversion:
 - Python 3.10 or higher
 - Azure CLI (for deployment)
 - Azure Developer CLI (azd)
-- OpenAI or Azure OpenAI API access
+- **For local development**: Your own OpenAI or Azure OpenAI resource with API access
+- **For Azure deployment**: OpenAI resource is automatically created when deploying with `azd`
 
 ### Local Development
 
