@@ -19,11 +19,15 @@ class TravelAgentChat {
         this.statusIndicator = document.getElementById('status-indicator');
         this.statusText = document.getElementById('status-text');
         this.charCount = document.getElementById('char-count');
+        this.newConversationBtn = document.getElementById('new-conversation-btn');
     }
 
     attachEventListeners() {
         // Send button click
         this.sendButton.addEventListener('click', () => this.sendMessage());
+        
+        // New conversation button click
+        this.newConversationBtn.addEventListener('click', () => this.startNewConversation());
         
         // Enter key to send (Shift+Enter for new line)
         this.messageInput.addEventListener('keydown', (e) => {
@@ -48,6 +52,32 @@ class TravelAgentChat {
 
     generateSessionId() {
         return 'session_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+    }
+
+    startNewConversation() {
+        // Generate new session ID
+        this.sessionId = this.generateSessionId();
+        
+        // Clear message history
+        this.messageHistory = [];
+        
+        // Clear chat messages
+        this.messagesContainer.innerHTML = '';
+        
+        // Show welcome message again
+        this.welcomeMessage.style.display = 'block';
+        
+        // Clear input
+        this.messageInput.value = '';
+        this.updateSendButton();
+        this.updateCharCounter();
+        this.autoResizeTextarea();
+        
+        // Hide typing indicator
+        this.typingIndicator.style.display = 'none';
+        this.isTyping = false;
+        
+        console.log('Started new conversation with session ID:', this.sessionId);
     }
 
     updateStatus(status) {

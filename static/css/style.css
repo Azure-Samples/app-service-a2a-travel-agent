@@ -75,6 +75,40 @@ body {
     color: var(--text-primary);
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.new-conversation-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.new-conversation-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.new-conversation-btn:active {
+    transform: translateY(0);
+}
+
+.new-conversation-btn i {
+    font-size: 0.875rem;
+}
+
 .agent-status {
     display: flex;
     align-items: center;
@@ -424,6 +458,19 @@ body {
     
     .header {
         padding: 1rem;
+    }
+    
+    .header-actions {
+        gap: 0.5rem;
+    }
+    
+    .new-conversation-btn span {
+        display: none;
+    }
+    
+    .new-conversation-btn {
+        padding: 0.5rem;
+        min-width: auto;
     }
     
     .chat-container {
