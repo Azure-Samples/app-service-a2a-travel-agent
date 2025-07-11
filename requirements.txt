@@ -1,0 +1,36 @@
+# Production requirements for Semantic Kernel A2A Travel Agent
+# Core web framework
+fastapi>=0.104.1
+uvicorn[standard]>=0.24.0
+gunicorn>=21.2.0
+
+# Data validation and HTTP client
+pydantic>=2.10.6
+httpx>=0.28.1
+httpx-sse>=0.4.0
+
+# AI and agent frameworks
+semantic-kernel>=1.30.0
+a2a-sdk[sqlite]>=0.2.9
+
+# Azure authentication
+azure-identity>=1.15.0
+
+# Database and persistence
+sqlalchemy>=2.0.41
+aiosqlite>=0.21.0
+
+# Security and authentication
+jwcrypto>=1.5.6
+pyjwt>=2.10.1
+
+# Web streaming and static files
+sse-starlette>=2.2.1
+starlette>=0.46.1
+jinja2>=3.1.2
+aiofiles>=23.2.1
+
+# Utilities
+typing-extensions>=4.12.2
+python-dotenv>=1.0.0
+python-multipart>=0.0.6

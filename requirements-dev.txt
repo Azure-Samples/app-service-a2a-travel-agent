@@ -1,0 +1,15 @@
+# Development dependencies for Semantic Kernel A2A Travel Agent
+# Include all production requirements
+-r requirements.txt
+
+# Development and testing tools
+pytest>=8.3.5
+pytest-asyncio>=0.21.1
+pytest-mock>=3.14.0
+
+# Code quality and linting
+ruff>=0.11.2
+mypy>=1.8.0
+
+# Type stubs for better development experience
+types-aiofiles>=23.2.0
