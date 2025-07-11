@@ -89,24 +89,13 @@ module web './core/host/appservice.bicep' = {
     runtimeVersion: '3.11'
     appSettings: {
       AZURE_OPENAI_ENDPOINT: openAi.outputs.endpoint
-      AZURE_OPENAI_CHAT_DEPLOYMENT_NAME: openAiDeploymentName
+      AZURE_OPENAI_DEPLOYMENT_NAME: openAiDeploymentName
       AZURE_OPENAI_API_VERSION: '2025-01-01-preview'
       WEBSITES_PORT: '8000'
       SCM_DO_BUILD_DURING_DEPLOYMENT: 'true'
       ENABLE_ORYX_BUILD: 'true'
       DEBUG: 'false'
     }
-  }
-}
-
-// Role assignment for App Service to access Azure OpenAI
-module openAiRoleAssignment './core/security/roleassignment.bicep' = {
-  name: 'openai-role-assignment'
-  scope: rg
-  params: {
-    principalId: web.outputs.identityPrincipalId
-    roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd' // Cognitive Services OpenAI User
-    openAiAccountName: openAi.outputs.name
   }
 }
 

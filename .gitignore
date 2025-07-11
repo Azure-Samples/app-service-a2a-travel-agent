@@ -121,9 +121,6 @@ celerybeat.pid
 
 # Environments
 .env
-.env.local
-.env.production
-.env.staging
 .venv
 env/
 venv/
@@ -158,45 +155,97 @@ cython_debug/
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be added to the global gitignore or merged into this project gitignore.  For a PyCharm
-#  project, it is recommended to consider:
-#   1. Exclude the .idea directory
-#   2. Include the .idea/vcs.xml file
-#   3. Exclude the .idea/workspace.xml file
-#   4. Include all other .idea files
-.idea/
-*.swp
-*.swo
+#  project, it is recommended to uncomment the following line
+#  and create separate JetBrains.gitignore file and add it here:
+#  JetBrains/
 
-# VS Code
+# Azure Developer CLI
+.azure/
+
+# Azure Functions artifacts
+bin
+obj
+appsettings.json
+local.settings.json
+.vscode/
+
+# Azure Storage Emulator
+__blobstorage__
+__queuestorage__
+__azurite_db*__.json
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Local development files
+.DS_Store
+Thumbs.db
+
+# IDE files
 .vscode/settings.json
 .vscode/launch.json
-.vscode/extensions.json
-.vscode/tasks.json
-
-# macOS
-.DS_Store
-
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# Azure
-.azure/
-azure.env
+.idea/
 
 # Application specific
 *.db
 *.sqlite
 *.sqlite3
+
+# Logs
 logs/
-tmp/
-temp/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# A2A database files
-a2a.db
-a2a_*.db
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
-# Local configuration overrides
-config.local.json
-settings.local.json
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port

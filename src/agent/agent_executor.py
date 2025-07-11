@@ -13,8 +13,8 @@ from a2a.utils import (
     new_task,
     new_text_artifact,
 )
-
 from .travel_agent import SemanticKernelTravelAgent
+
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class SemanticKernelTravelAgentExecutor(AgentExecutor):
         event_queue: EventQueue,
     ) -> None:
         """Execute agent request with A2A protocol support
-
+        
         Args:
             context: Request context containing user input and task info
             event_queue: Event queue for publishing task updates
@@ -43,9 +43,9 @@ class SemanticKernelTravelAgentExecutor(AgentExecutor):
             await event_queue.enqueue_event(task)
 
         async for partial in self.agent.stream(query, task.contextId):
-            require_input = partial["require_user_input"]
-            is_done = partial["is_task_complete"]
-            text_content = partial["content"]
+            require_input = partial['require_user_input']
+            is_done = partial['is_task_complete']
+            text_content = partial['content']
 
             if require_input:
                 await event_queue.enqueue_event(
@@ -71,8 +71,8 @@ class SemanticKernelTravelAgentExecutor(AgentExecutor):
                         taskId=task.id,
                         lastChunk=True,
                         artifact=new_text_artifact(
-                            name="current_result",
-                            description="Result of request to agent.",
+                            name='current_result',
+                            description='Result of request to agent.',
                             text=text_content,
                         ),
                     )
@@ -102,7 +102,9 @@ class SemanticKernelTravelAgentExecutor(AgentExecutor):
                     )
                 )
 
-    async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
+    async def cancel(
+        self, context: RequestContext, event_queue: EventQueue
+    ) -> None:
         """Cancel the current task execution"""
         logger.warning("Task cancellation requested but not implemented")
-        raise Exception("cancel not supported")
+        raise Exception('cancel not supported')

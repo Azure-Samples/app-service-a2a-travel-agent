@@ -3,7 +3,7 @@
 > **🔄 Adapted from Microsoft Sources**  
 > This sample was adapted from the [Microsoft DevBlogs Semantic Kernel A2A Integration article](https://devblogs.microsoft.com/foundry/semantic-kernel-a2a-integration/) and the [A2A Samples repository](https://github.com/a2aproject/a2a-samples/tree/main/samples/python/agents/semantickernel) to run as a single standalone web application on Azure App Service with a modern web interface.
 
-A standalone web application that combines Semantic Kernel AI agents with Google's Agent-to-Agent (A2A) protocol to provide comprehensive travel planning services. This application features a modern web interface and is optimized for deployment on Azure App Service.
+A standalone web application that combines Semantic Kernel AI agents with Google's Agent-to-Agent (A2A) protocol to provide comprehensive travel planning services. This application features a modern web interface and is designed for deployment on Azure App Service.
 
 ## Features
 
@@ -114,39 +114,41 @@ Imagine a user wants a budget-friendly trip plan with currency conversion:
 
 3. **Run the application**:
    ```bash
-   uvicorn main:app --reload --host 0.0.0.0 --port 8001
+   uvicorn main:app --reload --host 0.0.0.0 --port 8000
    ```
 
-4. **Open your browser** to `http://localhost:8001`
+4. **Open your browser** to `http://localhost:8000`
 
 ### Azure Deployment
 
-1. **Prerequisites**:
-   ```bash
-   azd auth login
-   ```
+**✅ Ready to Deploy**: This application includes a complete Azure Developer CLI (AZD) template for one-command deployment.
+
+1. **Authenticate with Azure Developer CLI**:
+    ```bash
+    azd auth login
+    ```
 
 2. **Initialize and deploy**:
    ```bash
    azd up
    ```
 
-3. **The deployment will automatically**:
-   - Create an Azure Resource Group
-   - Deploy Azure OpenAI with GPT-4.1-mini model
-   - Create an Azure App Service with Linux hosting
-   - Configure managed identity for secure OpenAI access
-   - Set up all necessary environment variables
-   - Deploy the application code
+3. **Configure API key** (one-time setup):
+   - Navigate to your Azure App Service in the Azure Portal
+   - Go to **Configuration** → **Application settings**
+   - Add `AZURE_OPENAI_API_KEY` with your Azure OpenAI API key
+   - Click **Save** and restart the app
 
 4. **Access your deployed application**:
-   - The deployment will output the web app URL
-   - Example: `https://appweb-<unique-id>.azurewebsites.net/`
+   - The AZD template will output your application URL
+   - Example: `https://appweb-xxxxxxxxx.azurewebsites.net`
 
-5. **Monitor your deployment**:
-   ```bash
-   azd show
-   ```
+**What gets deployed**:
+- ✅ Azure App Service Plan (P0V3 for production readiness)
+- ✅ Azure App Service with Python 3.11 runtime
+- ✅ Azure OpenAI resource with `gpt-4.1-mini` model
+- ✅ All necessary environment variables pre-configured
+- ✅ Automatic build and deployment from source code
 
 ## Implementation Details
 
@@ -192,11 +194,21 @@ The application uses a sophisticated multi-agent architecture powered by Semanti
 | `AZURE_OPENAI_ENDPOINT` | Azure OpenAI service endpoint | Yes (if using Azure OpenAI) |
 | `AZURE_OPENAI_API_KEY` | Azure OpenAI API key | Yes (if using Azure OpenAI) |
 | `AZURE_OPENAI_DEPLOYMENT_NAME` | Azure OpenAI deployment name | Yes (if using Azure OpenAI) |
+| `AZURE_OPENAI_API_VERSION` | Azure OpenAI API version | Yes (if using Azure OpenAI) |
 | `OPENAI_API_KEY` | OpenAI API key | Yes (if using OpenAI) |
 | `OPENAI_MODEL_ID` | OpenAI model ID (e.g., gpt-4) | Yes (if using OpenAI) |
 | `HOST` | Application host (default: 0.0.0.0) | No |
-| `PORT` | Application port (default: 8001) | No |
+| `PORT` | Application port (default: 8000) | No |
 | `DEBUG` | Enable debug mode (default: false) | No |
+
+### Authentication
+
+This application uses **API key authentication** for Azure OpenAI instead of managed identity for simplified deployment and configuration.
+
+**For Azure OpenAI**:
+- Set `AZURE_OPENAI_API_KEY` in your environment variables
+- Ensure your Azure OpenAI resource has the `gpt-4.1-mini` model deployed
+- API version `2025-01-01-preview` is recommended for latest features
 
 ### Switching Between OpenAI Services
 
@@ -258,7 +270,7 @@ semantic-kernel-travel-agent/
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Start the server with hot reload
-uvicorn main:app --reload --host 0.0.0.0 --port 8001
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Testing the Agent

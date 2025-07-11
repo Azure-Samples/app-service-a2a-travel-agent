@@ -1,5 +1,6 @@
-import logging
 import uuid
+import logging
+from typing import Dict
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
@@ -13,19 +14,17 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 
 # In-memory session store (in production, use Redis or database)
 travel_agent = SemanticKernelTravelAgent()
-active_sessions: dict[str, str] = {}
+active_sessions: Dict[str, str] = {}
 
 
 class ChatMessage(BaseModel):
     """Chat message model"""
-
     message: str
     session_id: str = None
 
 
 class ChatResponse(BaseModel):
     """Chat response model"""
-
     response: str
     session_id: str
     is_complete: bool
@@ -38,23 +37,23 @@ async def send_message(chat_message: ChatMessage):
     try:
         # Generate session ID if not provided
         session_id = chat_message.session_id or str(uuid.uuid4())
-
+        
         # Store session
         active_sessions[session_id] = session_id
-
+        
         # Get response from agent
         response = await travel_agent.invoke(chat_message.message, session_id)
-
+        
         return ChatResponse(
-            response=response.get("content", "No response available"),
+            response=response.get('content', 'No response available'),
             session_id=session_id,
-            is_complete=response.get("is_task_complete", False),
-            requires_input=response.get("require_user_input", True),
+            is_complete=response.get('is_task_complete', False),
+            requires_input=response.get('require_user_input', True)
         )
-
+        
     except Exception as e:
         logger.error(f"Error processing chat message: {e}")
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/stream")
@@ -63,35 +62,37 @@ async def stream_message(chat_message: ChatMessage):
     try:
         # Generate session ID if not provided
         session_id = chat_message.session_id or str(uuid.uuid4())
-
+        
         # Store session
         active_sessions[session_id] = session_id
-
+        
         async def generate_response():
             """Generate streaming response"""
             try:
-                async for partial in travel_agent.stream(chat_message.message, session_id):
+                async for partial in travel_agent.stream(
+                    chat_message.message, session_id
+                ):
                     # Format as SSE (Server-Sent Events)
-                    content = partial.get("content", "")
-                    is_complete = partial.get("is_task_complete", False)
-                    requires_input = partial.get("require_user_input", False)
-
+                    content = partial.get('content', '')
+                    is_complete = partial.get('is_task_complete', False)
+                    requires_input = partial.get('require_user_input', False)
+                    
                     response_data = {
                         "content": content,
                         "session_id": session_id,
                         "is_complete": is_complete,
-                        "requires_input": requires_input,
+                        "requires_input": requires_input
                     }
-
+                    
                     yield f"data: {response_data}\n\n"
-
+                    
                     if is_complete:
                         break
-
+                        
             except Exception as e:
                 logger.error(f"Error in streaming response: {e}")
-                yield f'data: {{"error": "{str(e)}"}}\n\n'
-
+                yield f"data: {{\"error\": \"{str(e)}\"}}\n\n"
+        
         return StreamingResponse(
             generate_response(),
             media_type="text/plain",
@@ -99,13 +100,13 @@ async def stream_message(chat_message: ChatMessage):
                 "Cache-Control": "no-cache",
                 "Connection": "keep-alive",
                 "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "*",
-            },
+                "Access-Control-Allow-Headers": "*"
+            }
         )
-
+        
     except Exception as e:
         logger.error(f"Error setting up streaming: {e}")
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/sessions")
